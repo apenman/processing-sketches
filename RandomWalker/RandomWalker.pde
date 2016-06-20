@@ -1,3 +1,5 @@
+import java.util.Random;
+
 class Walker {
  int x;
  int y;
@@ -15,10 +17,6 @@ class Walker {
  // 50% chance of moving towards mouse
  void stepLeanMouse() {
    float r = random(1);
-   
-   if(r<0.5) {
-     
-   }
  }
  
  // Tendency to go down and right
@@ -29,6 +27,21 @@ class Walker {
 
   x += stepx;
   y += stepy;
+ }
+ 
+ void stepNormalDistribution() {
+  float stepx = random(-1, 1);
+  float stepy = random(-1, 1);
+   
+  Random generator = new Random();
+  float num = (float) generator.nextGaussian();
+  float sd = 1;
+  float mean = 2;
+  float stepSize = sd * num + mean;
+  
+ 
+  x += stepx * stepSize;
+  y += stepy * stepSize;
  }
  
  // Pseudo-random steps
@@ -50,6 +63,6 @@ void setup() {
 }
 
 void draw() {
- w.stepLeanDownRight();
+ w.step();
  w.display();
 }
