@@ -11,7 +11,17 @@ class Walker {
   stroke(0);
   point(x,y);
  }
+
+ // 50% chance of moving towards mouse
+ void stepLeanMouse() {
+   float r = random(1);
+   
+   if(r<0.5) {
+     
+   }
+ }
  
+ // Tendency to go down and right
  void stepLeanDownRight() {
   float stepx = random(-1, 2.5);
   // Coordinates are inverted for y's. Positive number goes down
@@ -21,6 +31,7 @@ class Walker {
   y += stepy;
  }
  
+ // Pseudo-random steps
  void step() {
   float stepx = random(-1, 1);
   float stepy = random(-1, 1);
