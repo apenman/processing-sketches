@@ -12,9 +12,18 @@ class Walker {
   point(x,y);
  }
  
+ void stepLeanDownRight() {
+  float stepx = random(-1, 2.5);
+  // Coordinates are inverted for y's. Positive number goes down
+  float stepy = random(-1, 2.5);
+
+  x += stepx;
+  y += stepy;
+ }
+ 
  void step() {
-  int stepx = int(random(3))-1;
-  int stepy = int(random(3))-1;
+  float stepx = random(-1, 1);
+  float stepy = random(-1, 1);
   
   x += stepx;
   y += stepy;
@@ -30,6 +39,6 @@ void setup() {
 }
 
 void draw() {
- w.step();
+ w.stepLeanDownRight();
  w.display();
 }
