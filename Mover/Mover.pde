@@ -27,6 +27,8 @@ class MyMover {
 
 
 	void update() {
+    acceleration = PVector.random2D();
+    acceleration.mult(0.15);
 		velocity.add(acceleration);
 		velocity.limit(topSpeed);
 		location.add(velocity);
