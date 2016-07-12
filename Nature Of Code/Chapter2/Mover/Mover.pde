@@ -10,9 +10,14 @@ void setup() {
 void draw() {
 	background(255);
 	PVector wind = new PVector(0.01, 0);
-	PVector gravity = new PVector(0, 0.1);
+
 
 	for(int i = 0; i < movers.length; i++) {
+		// In real life gravity scales with mass
+		float m = movers[i].mass;
+		PVector gravity = new PVector(0, 0.1*m);
+
+
 		movers[i].applyForce(wind);
 		movers[i].applyForce(gravity);
 
