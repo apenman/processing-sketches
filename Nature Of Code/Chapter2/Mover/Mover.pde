@@ -9,10 +9,18 @@ void setup() {
 
 void draw() {
 	background(255);
-	PVector wind = new PVector(0.01, 0);
-
+	PVector wind = new PVector(0.001, 0);
 
 	for(int i = 0; i < movers.length; i++) {
+		// // Apply friction
+		// // c is mu
+		// float c = 0.01;
+		// PVector friction = movers[i].velocity.get();
+		// // Reverse velocity, normalize, scale
+		// friction.mult(-1);
+		// friction.normalize();
+		// friction.mult(c);
+
 		// In real life gravity scales with mass
 		float m = movers[i].mass;
 		PVector gravity = new PVector(0, 0.1*m);
