@@ -1,12 +1,10 @@
 class MyAttractor {
 	float mass;
 	PVector location;
-  	float G;
 
 	MyAttractor() {
 		location = new PVector(width/2, height/2);
 		mass = 20;
-    	G = 0.4;
 	}
 
 	void display() {
@@ -68,23 +66,27 @@ class MyMover {
 		ellipse(location.x, location.y, 16, 16);
 	}
 
-	void checkEdges() {
-		if(location.x > width) {
-			location.x = 0;
-		} else if (location.x < 0) {
-			location.x = width;
-		}
+	PVector attract(MyMover m) {
+		PVector force = PVector.sub(location, m.location);
+		float distance = force.mag();
 
-		if(location.y > height) {
-			location.y = 0;
-		} else if (location.y < 0) {
-			location.y = height;
-		}
+		// Based on pixels
+		// Don't want distance to be too high or too low to throw off force
+		distance = constrain(distance,5,25);
+		
+		force.normalize();
+
+		float strength = (G * mass * m.mass) / (distance * distance);
+		force.mult(strength);
+
+		return force;
 	}
 }
 
 MyMover[] movers = new MyMover[10];
 MyAttractor a;
+// Fake gravity constant
+float G = 0.4;
 
 void setup() {
 	size(640, 360);
@@ -101,6 +103,15 @@ void draw() {
 	a.display();
 
 	for(int i = 0; i < movers.length; i++) {
+		// Attract all movers to each other
+		for(int j = 0; j < movers.length; j++) {
+			if(i != j) {
+				PVector force = movers[j].attract(movers[i]);
+				movers[i].applyForce(force);
+			}
+		}
+
+		// Attract mover to attractor
 		PVector f = a.attract(movers[i]);
 		movers[i].applyForce(f);
 		movers[i].update();
