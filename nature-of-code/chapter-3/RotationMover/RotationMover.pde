@@ -4,7 +4,6 @@ class Mover {
 	PVector acceleration;
 	float mass;
 
-	float angle = 0;
 	float aVelocity = 0;
 	float aAcceleration = 0.001;
 	float G = 0.4;
@@ -19,10 +18,6 @@ class Mover {
 	void update() {
 		velocity.add(acceleration);
 		location.add(velocity);
-
-		aVelocity += aAcceleration;
-		angle += aVelocity;
-
 		acceleration.mult(0);
 	}
 
@@ -30,7 +25,9 @@ class Mover {
 		stroke(0);
 		fill(175,200);
 		rectMode(CENTER);
-
+  
+  
+    float angle = atan2(velocity.x, velocity.y);
 		// Use push/pop matrix so rotation does not affect the rest of the world
 		pushMatrix();
 		translate(location.x, location.y);
