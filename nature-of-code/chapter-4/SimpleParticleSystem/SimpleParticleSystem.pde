@@ -1,5 +1,41 @@
 import java.util.Iterator;
 
+class ParticleSystem {
+    ArrayList<Particle> particles;
+    PVector origin;
+    PVector oVelocity; // move origin
+
+    ParticleSystem() {
+        particles = new ArrayList<Particle>();
+        origin = new PVector(width/2, 50);
+        oVelocity = new PVector(5, 0); 
+    }
+
+    void addParticle() {
+        particles.add(new Particle(origin));
+    }
+
+    void run() {
+        addParticle();
+
+        Iterator<Particle> iter = particles.iterator();
+        
+        while(iter.hasNext()) {
+           Particle p = iter.next();
+           p.run();
+           if(p.isDead())
+             // Creating an iterator makes removing values easy
+             iter.remove();
+        }
+
+        // Move origin
+        origin.add(oVelocity);
+        // keep origin in x bounds
+        if(origin.x > width - 25 || origin.x < 25)
+            oVelocity = new PVector(-1 * oVelocity.x, 0);
+    }
+}
+
 class Particle {
     PVector location;
     PVector velocity;
@@ -35,25 +71,14 @@ class Particle {
     }
 }
 
-ArrayList<Particle> plist;
+ParticleSystem ps;
 
 void setup() {
     size(640, 640);
-    plist = new ArrayList<Particle>();
+    ps = new ParticleSystem();
 }
 
 void draw() {
     background(255);
-    
-    plist.add(new Particle(new PVector(width/2, 50)));
-    
-    Iterator<Particle> iter = plist.iterator();
-    
-    while(iter.hasNext()) {
-       Particle p = iter.next();
-       p.run();
-       if(p.isDead())
-         // Creating an iterator makes removing values easy
-         iter.remove();
-    }
+    ps.run();
 }
