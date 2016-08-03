@@ -5,10 +5,10 @@ class ParticleSystem {
     PVector origin;
     PVector oVelocity; // move origin
 
-    ParticleSystem() {
+    ParticleSystem(PVector origin) {
         particles = new ArrayList<Particle>();
-        origin = new PVector(width/2, 50);
-        oVelocity = new PVector(5, 0); 
+        this.origin = origin;
+        oVelocity = new PVector(1, 0); 
     }
 
     void addParticle() {
@@ -16,8 +16,6 @@ class ParticleSystem {
     }
 
     void run() {
-        addParticle();
-
         Iterator<Particle> iter = particles.iterator();
         
         while(iter.hasNext()) {
@@ -71,14 +69,22 @@ class Particle {
     }
 }
 
-ParticleSystem ps;
+ArrayList<ParticleSystem> systems;
 
 void setup() {
     size(640, 640);
-    ps = new ParticleSystem();
+    systems = new ArrayList<ParticleSystem>();
+}
+
+void mousePressed() {
+    systems.add(new ParticleSystem(new PVector(mouseX, mouseY)));
 }
 
 void draw() {
     background(255);
-    ps.run();
+
+    for(ParticleSystem ps : systems) {
+        ps.run();
+        ps.addParticle();
+    }
 }
