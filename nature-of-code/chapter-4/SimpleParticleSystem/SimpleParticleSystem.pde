@@ -12,7 +12,18 @@ class ParticleSystem {
     }
 
     void addParticle() {
-        particles.add(new Particle(origin));
+        float r = random(1);
+
+        if(r > 0.5)
+            particles.add(new Particle(origin));
+        else 
+            particles.add(new Confetti(origin));
+    }
+
+    void applyForce(PVector force) {
+        for(Particle p : particles) {
+            p.applyForce(force);
+        }
     }
 
     void run() {
@@ -23,6 +34,7 @@ class ParticleSystem {
            p.run();
            if(p.isDead())
              // Creating an iterator makes removing values easy
+             // iterators have the remove logic built in already
              iter.remove();
         }
 
@@ -39,12 +51,22 @@ class Particle {
     PVector velocity;
     PVector acceleration;
     float lifespan;
+    float mass = 1;
 
     Particle(PVector l) {
-        acceleration = new PVector(0, 0.05);
+        acceleration = new PVector(0, 0);
         velocity = new PVector(random(-1,1),random(-2,0));
         location = l.get();
         lifespan = 255;
+
+        // Now that we added gravity in applyForce, clear acc
+        acceleration.mult(0);
+    }
+
+    void applyForce(PVector force) {
+        PVector f = force.get();
+        f.div(mass);
+        acceleration.add(f);
     }
 
     void run() {
@@ -69,6 +91,26 @@ class Particle {
     }
 }
 
+class Confetti extends Particle {
+    Confetti(PVector l) {
+        super(l);
+    }
+
+    void display() {
+        float theta = map(location.x, 0, width, 0, TWO_PI*2);
+
+        rectMode(CENTER);
+        fill(0, lifespan);
+        stroke(0, lifespan);
+
+        pushMatrix();
+        translate(location.x, location.y);
+        rotate(theta);
+        rect(0, 0, 8, 8);
+        popMatrix();
+    }
+}
+
 ArrayList<ParticleSystem> systems;
 
 void setup() {
@@ -84,7 +126,8 @@ void draw() {
     background(255);
 
     for(ParticleSystem ps : systems) {
-        ps.run();
+        ps.applyForce(new PVector(0, 0.01));
         ps.addParticle();
+        ps.run();
     }
 }
