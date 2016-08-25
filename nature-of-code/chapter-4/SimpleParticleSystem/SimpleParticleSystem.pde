@@ -1,5 +1,32 @@
 import java.util.Iterator;
 
+
+class Repeller {
+    PVector location;
+    float r = 10;
+    float strength = 100;
+
+    Repeller(float x, float y) {
+        location = new PVector(x, y);
+    }
+
+    PVector repel(Particle p) {
+        PVector dir = PVector.sub(location, p.location);
+        float d = dir.mag();
+        dir.normalize();
+        d = constrain(d, 5, 100);
+        float force = -1 * strength / (d * d);
+        dir.mult(force);
+        return dir;
+    }
+
+    void display() {
+        stroke(0);
+        fill(175);
+        ellipse(location.x, location.y, r*2, r*2);
+    }
+}
+
 class ParticleSystem {
     ArrayList<Particle> particles;
     PVector origin;
@@ -22,6 +49,13 @@ class ParticleSystem {
 
     void applyForce(PVector force) {
         for(Particle p : particles) {
+            p.applyForce(force);
+        }
+    }
+
+    void applyRepeller(Repeller r) {
+        for(Particle p : particles) {
+            PVector force = r.repel(p);
             p.applyForce(force);
         }
     }
@@ -112,10 +146,15 @@ class Confetti extends Particle {
 }
 
 ArrayList<ParticleSystem> systems;
+ArrayList<Repeller> repellers;
 
 void setup() {
     size(640, 640);
     systems = new ArrayList<ParticleSystem>();
+    repellers = new ArrayList<Repeller>();//new Repeller(width/2, height/2);
+    for(int i = 0; i < 5; i++) {
+        repellers.add(new Repeller(random(width-50), random(height-50)));
+    }
 }
 
 void mousePressed() {
@@ -127,7 +166,16 @@ void draw() {
 
     for(ParticleSystem ps : systems) {
         ps.applyForce(new PVector(0, 0.01));
+        for(Repeller r : repellers) {
+            ps.applyRepeller(r);
+        }
         ps.addParticle();
         ps.run();
+    }
+
+
+    // Lazy way to draw repellers oh well
+    for(Repeller r : repellers) {
+        r.display();
     }
 }
