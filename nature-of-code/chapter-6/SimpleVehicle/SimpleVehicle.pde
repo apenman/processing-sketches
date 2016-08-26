@@ -55,16 +55,41 @@ class Vehicle {
 
 
 Vehicle vehicle;
+float x,y,xSeekDir,ySeekDir;
 
 void setup() {
     size(640, 640);
     vehicle = new Vehicle(width/3, height/3);
+    x = width-100;
+    y = 10;
+    xSeekDir = 1;
+    ySeekDir = 1;
 }
 
 void draw() {
     background(255);
 
-    vehicle.seek(new PVector(width/3*2, height/3*2));
+    // Lame logic just to get some following action going
+    if(y > height - 10) {
+        ySeekDir = -1;
+    } 
+    if(y < 0) {
+        ySeekDir = 1;
+    }
+    if(x > height - 10) {
+        xSeekDir = -1;
+    } 
+    if(x < 0) {
+        xSeekDir = 1;
+    }
+
+    y += ySeekDir * 4;
+    x += xSeekDir * 5;
+
+    vehicle.seek(new PVector(x,y));
     vehicle.update();
     vehicle.display();
+    fill(0);
+    fill(175);
+    ellipse(x, y, 8, 8);
 }
