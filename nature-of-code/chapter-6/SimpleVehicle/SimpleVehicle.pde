@@ -10,7 +10,7 @@ class Vehicle {
         acceleration = new PVector(0,0);
 
         r = 3;
-        maxSpeed = 4;
+        maxSpeed = 4.5;
         maxForce = 0.1;
     }
 
@@ -41,7 +41,7 @@ class Vehicle {
         float d = desired.mag(); // Get distance from location to target
         desired.normalize();
         // Check if we are within a set radius of our target
-        if(d < 100) {
+        if(d < 75) {
             // If we are, slow down
             float m = map(d, 0, 100, 0, maxSpeed);
             desired.mult(m);
