@@ -36,6 +36,26 @@ class Vehicle {
         applyForce(steer);
     }
 
+    void arrive(PVector target) {
+        PVector desired = PVector.sub(target, location);
+        float d = desired.mag(); // Get distance from location to target
+        desired.normalize();
+        // Check if we are within a set radius of our target
+        if(d < 100) {
+            // If we are, slow down
+            float m = map(d, 0, 100, 0, maxSpeed);
+            desired.mult(m);
+        }
+        else {
+            // We aren't, full speed!
+            desired.mult(maxSpeed);
+        }
+
+        PVector steer = PVector.sub(desired, velocity);
+        steer.limit(maxForce);
+        applyForce(steer);
+    }
+
     void display() {
       float theta = velocity.heading() + PI/2; // Vehicle is a triangle, rotate it 90 degrees to face right way  
       fill(175);
@@ -82,13 +102,14 @@ void draw() {
         xSeekDir = 1;
     }
 
-    y += ySeekDir * 4;
-    x += xSeekDir * 5;
+    y += ySeekDir * 2;
+    x += xSeekDir * 3;
 
-    vehicle.seek(new PVector(x,y));
+    vehicle.arrive(new PVector(x,y));
+    //vehicle.arrive(new PVector(width/3*2,height/3*2));
     vehicle.update();
     vehicle.display();
-    fill(0);
+    stroke(0);
     fill(175);
     ellipse(x, y, 8, 8);
 }
