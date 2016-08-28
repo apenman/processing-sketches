@@ -201,12 +201,13 @@ void draw() {
 
     // Changing field with trigger
     // TODO: Clean logic
-    if(millis() > trigger) {
-        z += 0.1;
-        field.update();
-        trigger = millis() + 1000;
-    }
-
+    //if(millis() > trigger) {
+    //    z += 0.1;
+    //    field.update();
+    //    trigger = millis() + 1000;
+    //}
+    z += 0.01;
+    field.update();
     /******** CODE FOR ARRIVING/SEEKING FUNCTION **************/
     // Lame logic just to get some following action going
     // if(y > height - 10) {
