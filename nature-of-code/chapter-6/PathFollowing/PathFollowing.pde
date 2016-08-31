@@ -1,3 +1,4 @@
+// Doesn't handle sharp angles well
 class Vehicle {
     PVector location, velocity, acceleration;
     float r;
@@ -48,24 +49,32 @@ class Vehicle {
     }
 
     void follow(Path p) {
+        PVector target = new PVector(0,0);
+        float closestNormal = 100000000;
         PVector predict = velocity.get();
         predict.normalize();
         predict.mult(25); // arbitrarily pick 25 pixels ahead
         PVector predictLoc = PVector.add(location, predict);
 
-        PVector a = p.start;
-        PVector b = p.end;
-        PVector normalPoint = getNormalPoint(predictLoc, a, b);
+        for (int i = 0; i < p.points.size()-1; i++) {
+            PVector a = p.points.get(i);
+            PVector b = p.points.get(i+1);
+            PVector normalPoint = getNormalPoint(predictLoc, a, b);
+            // Check if normal point is on our path
+            if (normalPoint.x < a.x || normalPoint.x > b.x) {
+                normalPoint = b.get(); // use endpoint if we cant find normal on path
+            }
 
-        PVector dir = PVector.sub(b, a);
-        dir.normalize();
-        dir.mult(10); // Set target ahead of normal
-        PVector target = PVector.add(normalPoint, dir);
-
-        float distance = PVector.dist(normalPoint, predictLoc);
-        if(distance > p.radius) {
-            seek(target);
+            float distance = PVector.dist(normalPoint, predictLoc);
+            if(distance < closestNormal) {
+                closestNormal = distance;
+                target = normalPoint.get();
+            }
         }
+
+        // Quick check for now; fix it
+        if(target.x != 0 && target.y != 0)
+            seek(target);
     }
 
     PVector getNormalPoint(PVector p, PVector a, PVector b) {
@@ -124,14 +133,17 @@ Path p;
 void setup() {
     size(640, 640);
     p = new Path();
-    for(int i = 0; i < 10; i++) {
-        p.addPoint(random(width-50), random(height-50));
+    for(int i = 0; i < 5; i++) {
+        p.addPoint(width/5*i, random(250));
     }
-    v = new Vehicle(25,0);
+    v = new Vehicle(10,0);
 }
 
 void draw() {
     background(255);
 
     p.display();
+    v.update();
+    v.follow(p);
+    v.display();
 }
