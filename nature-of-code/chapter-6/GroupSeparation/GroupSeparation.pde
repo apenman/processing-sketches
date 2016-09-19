@@ -22,6 +22,15 @@ class Vehicle {
         checkBounds();
     }
 
+    void applyBehaviors(ArrayList<Vehicle> vehicles) {
+        PVector sep = separate(vehicles);
+        PVector seek = seek(new PVector(mouseX, mouseY));
+        //sep.mult(15);
+        //seek.mult(0.5);
+        applyForce(sep);
+        applyForce(seek);
+    }
+
     void applyForce(PVector f) {
         acceleration.add(f);
     }
@@ -37,9 +46,10 @@ class Vehicle {
             location.y = 0;
     }
 
-    void separate(ArrayList<Vehicle> others) {
-        float desiredSeparation = r*2;
+    PVector separate(ArrayList<Vehicle> others) {
+        float desiredSeparation = 50;
         PVector sum = new PVector();
+        PVector steer = new PVector();
         int count = 0;
 
         for(Vehicle v : others) {
@@ -57,21 +67,22 @@ class Vehicle {
             // Get average vector after summing close vehicles
             sum.div(count);
             sum.setMag(maxSpeed);
-            PVector steer = PVector.sub(sum, velocity);
+            steer = PVector.sub(sum, velocity);
             steer.limit(maxForce);
-            applyForce(steer);
         }
+
+        return steer;
     }
 
     // Seeks a target location and calculates the difference in force needed to arrive
-    void seek(PVector target) {
+    PVector seek(PVector target) {
         PVector desired = PVector.sub(target, location);
         desired.normalize();
         desired.mult(maxSpeed);
 
         PVector steer = PVector.sub(desired, velocity);
         steer.limit(maxForce);
-        applyForce(steer);
+        return steer;
     }
 
     void display() {
@@ -93,7 +104,7 @@ class Vehicle {
 ArrayList<Vehicle> vehicles;
 
 void setup() {
-    size(320, 240);
+    size(640, 640);
     vehicles = new ArrayList<Vehicle>();
     for(int i = 0; i < 100; i++) {
         vehicles.add(new Vehicle(random(width), random(height)));
@@ -103,7 +114,7 @@ void setup() {
 void draw() {
     background(255);
     for(Vehicle v : vehicles) {
-        v.separate(vehicles);
+        v.applyBehaviors(vehicles);
         v.update();
         v.display();
     }
