@@ -11,7 +11,7 @@ class Flock{
 
     void run() {
         for(Boid b : boids) {
-            b.run(boids);
+            b.flock(boids);
         }
     }
 
@@ -22,12 +22,14 @@ class Flock{
 
 class Boid {
     PVector location, velocity, acceleration;
-    float maxSpeed, maxForce;
+    float maxSpeed, maxForce, r;
 
     Boid(float x, float y) {
         location = new PVector(x, y);
         velocity = new PVector();
         acceleration = new PVector();
+
+        r = 3;
 
         maxSpeed = 2;
         maxForce = 0.1;
@@ -42,6 +44,34 @@ class Boid {
 
     void applyForce(PVector force) {
         acceleration.add(force);
+    }
+
+    PVector separate(ArrayList<Boid> others) {
+        float desiredSeparation = 50;
+        PVector sum = new PVector();
+        PVector steer = new PVector();
+        int count = 0;
+
+        for(Boid b : others) {
+            float d = PVector.dist(this.location, b.location);
+            if(d > 0 && d < desiredSeparation) {
+                PVector diff = PVector.sub(this.location, b.location);
+                diff.normalize();
+                diff.div(d);
+                sum.add(diff);
+                count++;
+            }
+        }
+
+        if(count > 0) {
+            // Get average vector after summing close vehicles
+            sum.div(count);
+            sum.setMag(maxSpeed);
+            steer = PVector.sub(sum, velocity);
+            steer.limit(maxForce);
+        }
+
+        return steer;
     }
 
     // Seeks a target location and calculates the difference in force needed to arrive
@@ -68,7 +98,7 @@ class Boid {
 
             // TODO: boids can only see other boids in peripheral vision
                     // (not circle around them)
-            if(dist > 0 && dist < neighborDist) {
+            if(dist >= 0 && dist < neighborDist) {
                 // Average all other boids' velocity within proximity to get our velocity
                 sum.add(b.velocity);
                 count++;
@@ -82,7 +112,7 @@ class Boid {
             PVector steer = PVector.sub(sum, velocity);
             steer.setMag(maxForce);
 
-            return steer
+            return steer;
         } else {
             return new PVector();
         }
@@ -114,12 +144,57 @@ class Boid {
             return new PVector();
         }
     }
+
+
+    void flock(ArrayList<Boid> boids) {
+        PVector sep = separate(boids);   
+        PVector ali = align(boids); 
+        PVector coh = cohesion(boids);
+
+        // Add the force vectors to acceleration
+        applyForce(sep);
+        applyForce(ali);
+        applyForce(coh);
+        update();
+        display();
+    }
+
+    void display() {
+        // Pulled from vehicle class in previous exercise
+        float theta = velocity.heading() + PI/2; // Vehicle is a triangle, rotate it 90 degrees to face right way  
+        fill(175);
+        stroke(0);
+        pushMatrix();
+        translate(location.x,location.y);
+        rotate(theta);
+        beginShape();
+        vertex(0, -r*2);
+        vertex(-r, r*2);
+        vertex(r, r*2);
+        endShape(CLOSE);
+        popMatrix();
+    }
+
+    void borders() {
+        if (location.x < -r) location.x = width+r;
+        if (location.y < -r) location.y = height+r;
+        if (location.x > width+r) location.x = -r;
+        if (location.y > height+r) location.y = -r;
+      }
+    
 }
+
+Flock flock;
 
 void setup() {
     size(640, 640);
+    flock = new Flock();
+    for(int i = 0; i < 50; i++) {
+        flock.addBoid(new Boid(random(width), random(height)));
+    }
 }
 
 void draw() {
     background(255);
+    flock.run();
 }
