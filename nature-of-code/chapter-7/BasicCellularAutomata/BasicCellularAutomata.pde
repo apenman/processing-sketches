@@ -1,10 +1,15 @@
 int[] cells;
 int[] ruleset = {0,1,0,1,1,0,1,0};
-int generation, w;
+int generation, w, l;
 
 void setup() {
     size(640, 640);
     background(255);
+
+    generation = 0;
+    // Cell width
+    w = 5;
+    
     cells = new int[100];
 
     // Start with all states as 0 except middle cell
@@ -12,21 +17,19 @@ void setup() {
         cells[i] = 0;
     }
     cells[cells.length/2] = 1;
-
-    generation = 0;
-    w = 5;
 }
 
 void draw() {
     generate();
 
     for(int i = 0; i < cells.length; i++) {
-        if(cells[i] == 0)
-            fill(255);
-        else 
+        // Only draw cells with state of 1 for now
+        // Slight optimization for simple black and white
+        if(cells[i] == 1) {
             fill(0);
-        stroke(0);
-        rect(i*w,generation*w,w,w);
+            stroke(255);
+            rect(i*w,generation*w,w,w);
+        }
     }
 
     generation++;
