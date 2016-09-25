@@ -1,9 +1,14 @@
+// TODO:
+//   1. Create Cell object
+//   2. Use wraparound look up for neighbors
+
 int[][] board;
 int col, row, w;
 
 void setup() {
     size(640, 640);
     background(255);
+    frameRate(3);
     col = 50;
     row = 50;
     w = 10;
