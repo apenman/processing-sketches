@@ -34,28 +34,46 @@ void draw() {
 
     generation++;
 
-    if(generation >= 100) {
-        noLoop();
+    //// Stop looping
+    // if(generation >= 100) {
+    //     noLoop();
+    // }
+
+    // When CA hits bottom of window
+    // Reset with new ruleset
+    if(generation*w >= height) {
+        generation = 0;
+        generateNewRuleset();
+        background(255);
     }
 }
 
-private void generate() {
+void generate() {
     // Use newCells array because we don't want to overwrite previous generation as we go
     int[] newGeneration = new int[cells.length];
 
     // Start at index 1 and end one less than length to skip edge cases
-    for(int i = 1; i < cells.length-1; i++) {
+    for(int i = 0; i < cells.length; i++) {
         newGeneration[i] = rules(cells[i-1], cells[i], cells[i+1]);
     }
 
     cells = newGeneration;
 }
 
-private int rules(int left, int middle, int right) {
+int rules(int left, int middle, int right) {
     // Convert neighborhood to binary string
     String s = "" + left + middle + right;
     // Convert binary string to int
     int index = Integer.parseInt(s, 2);
     // Access the value from our ruleset using converted int
     return ruleset[index];
+}
+
+void generateNewRuleset() {
+    for(int i = 0; i < 8; i++) {
+        if(random(1) < 0.5)
+            ruleset[i] = 0;
+        else
+            ruleset[i] = 1;
+    }
 }
