@@ -1,1 +1,1 @@
-Exercise from Daniel Shiffman's Nature Of Code book
+Exercises from Daniel Shiffman's Nature Of Code book
