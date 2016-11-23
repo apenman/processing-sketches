@@ -39,6 +39,7 @@ class Car {
     location.add(velocity);
   }
 
+
 	void accelerate() {
 		acceleration.add(new PVector(0.001, 0));
 	}
