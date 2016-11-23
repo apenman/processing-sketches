@@ -35,7 +35,7 @@ class Car {
 
   void update() {
     velocity.add(acceleration);
-    location.add(velocity);   
+    location.add(velocity);
   }
 
 	void accelerate() {
