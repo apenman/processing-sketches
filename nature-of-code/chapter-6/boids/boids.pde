@@ -1,3 +1,7 @@
+import codeanticode.syphon.*;
+
+SyphonServer server;
+
 // 
 
 // TODO: Cohesion and alignment loops are identical -- combine them
@@ -12,7 +16,9 @@ class Flock{
     void run() {
         for(Boid b : boids) {
             b.flock(boids);
+            b.borders();
         }
+        server.sendScreen();
     }
 
     void addBoid(Boid b) {
@@ -176,6 +182,7 @@ class Boid {
     }
 
     void borders() {
+      println("BORDERS");
         if (location.x < -r) location.x = width+r;
         if (location.y < -r) location.y = height+r;
         if (location.x > width+r) location.x = -r;
@@ -186,12 +193,19 @@ class Boid {
 
 Flock flock;
 
+void settings() {
+      size(640, 640, P3D);
+      PJOGL.profile=1;
+}
+
 void setup() {
-    size(640, 640);
+
+
     flock = new Flock();
     for(int i = 0; i < 50; i++) {
         flock.addBoid(new Boid(random(width), random(height)));
     }
+  server = new SyphonServer(this, "Processing Syphon");
 }
 
 void draw() {

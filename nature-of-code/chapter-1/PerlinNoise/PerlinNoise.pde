@@ -1,7 +1,16 @@
+import codeanticode.syphon.*;
+
+
+SyphonServer server;
 float test = 0.0;
 
+void settings() {
+      size(300,300, P3D);  
+      PJOGL.profile=1;
+}
+
 void setup() {
-    size(300,300);  
+      server = new SyphonServer(this, "Processing Syphon");
 }
 
 void draw() {
@@ -19,4 +28,6 @@ void draw() {
    xoff += 0.01;
   }
   updatePixels();
+    server.sendScreen();
+
 }
